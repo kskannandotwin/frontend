@@ -1,29 +1,36 @@
 import "../css/Home.css";
 import MovieCard from "../components/MovieCard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { searchMovies, getPopularMovies } from "../services/api";
 
 function Home() {
   const [searchQuery, setSearchQuery] = useState("");
-  const movies = [
-    {
-      id: 1,
-      title: "Inception",
-      director: "Christopher Nolan",
-      year: 2010,
-    },
-    {
-      id: 2,
-      title: "The Matrix",
-      director: "The Wachowskis",
-      year: 1999,
-    },
-    {
-      id: 3,
-      title: "Interstellar",
-      director: "Christopher Nolan",
-      year: 2014,
-    },
-  ];
+  const [movies, setMovies] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadPopularMovies = async () => {
+      try {
+        const popularMovies = await getPopularMovies();
+        setMovies(popularMovies);
+      } catch (err) {
+        console.error("Error fetching popular movies:", err);
+        setError("Failed to load popular movies.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadPopularMovies();
+  }, []);
+
+  useEffect(() => {
+    const fetchMovies = async () => {
+      const popularMovies = await getPopularMovies();
+      setMovies(popularMovies);
+    };
+    fetchMovies();
+  }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -45,12 +52,17 @@ function Home() {
           Search
         </button>
       </form>
-      <h1>Movie List</h1>
-      <div className="movie-grid">
-        {movies.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} />
-        ))}
-      </div>
+
+      {error && <div className="error-message">{error}</div>}
+      {loading ? (
+        <div className="loading">Loading movies...</div>
+      ) : (
+        <div className="movies-grid">
+          {movies.map((movie) => (
+            <MovieCard key={movie.id} movie={movie} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
