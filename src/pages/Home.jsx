@@ -32,10 +32,22 @@ function Home() {
     fetchMovies();
   }, []);
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    alert(searchQuery);
-    setSearchQuery("");
+    if (!searchQuery.trim()) return;
+    if (loading) return;
+
+    setLoading(true);
+    try {
+      const searchResults = await searchMovies(searchQuery);
+      setMovies(searchResults);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching searched movies:", err);
+      setError("Failed to load searched movies.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
