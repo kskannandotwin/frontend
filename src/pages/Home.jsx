@@ -24,13 +24,13 @@ function Home() {
     loadPopularMovies();
   }, []);
 
-  useEffect(() => {
-    const fetchMovies = async () => {
-      const popularMovies = await getPopularMovies();
-      setMovies(popularMovies);
-    };
-    fetchMovies();
-  }, []);
+  // useEffect(() => {
+  //   const fetchMovies = async () => {
+  //     const popularMovies = await getPopularMovies();
+  //     setMovies(popularMovies);
+  //   };
+  //   fetchMovies();
+  // }, []);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -55,7 +55,7 @@ function Home() {
       <form onSubmit={handleSearch} className="search-form">
         <input
           type="text"
-          placeholder="Search movies..."
+          placeholder="Search for movies..."
           className="search-input"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -67,7 +67,7 @@ function Home() {
 
       {error && <div className="error-message">{error}</div>}
       {loading ? (
-        <div className="loading">Loading movies...</div>
+        <div className="loading">Loading...</div>
       ) : (
         <div className="movies-grid">
           {movies.map((movie) => (
